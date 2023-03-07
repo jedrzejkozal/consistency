@@ -187,10 +187,10 @@ def train(model: ContinualModel, dataset: ContinualDataset,
         csv_logger.write(vars(args))
         save_task_perf(task_perf_path, results, dataset.N_TASKS)
 
-    # save checkpoint
-    fname = os.path.join(tb_logger.get_log_dir(), 'checkpoint.pth')
-    if torch.cuda.device_count() > 1:
-        torch.save(model.net.module.state_dict(), fname)
-    else:
-        torch.save(model.net.state_dict(), fname)
+        # save checkpoint
+        fname = os.path.join(tb_logger.get_log_dir(), 'checkpoint.pth')
+        if torch.cuda.device_count() > 1:
+            torch.save(model.net.module.state_dict(), fname)
+        else:
+            torch.save(model.net.state_dict(), fname)
 

@@ -1,0 +1,8 @@
+cifar-10-batches-py/
+cifar-10-python.tar.gz
+.vscode
+*.pth
+__pycache__/
+data/cifar-100-python.tar.gz
+data/cifar-100-python/
+data/
