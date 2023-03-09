@@ -27,11 +27,8 @@ class CRNew(ContinualModel):
         super().__init__(backbone, loss, args, transform)
 
         self.buffer = Buffer(self.args.buffer_size, self.device)
-        self.learned_classes = 0
 
     def compute_pretext_task_loss(self, buf_outputs, buf_logits):
-        # buf_outputs = buf_outputs[:, :self.learned_classes]
-        # buf_logits = buf_logits[:, :self.learned_classes]
         if self.args.pretext_task == 'l1':
             loss = torch.pairwise_distance(buf_outputs, buf_logits, p=1).mean()
         elif self.args.pretext_task == 'l2':
@@ -83,12 +80,3 @@ class CRNew(ContinualModel):
                              logits=outputs.data)
 
         return loss.item(), loss_1.item()
-
-    def update_logits(self):
-        pass
-        # with torch.no_grad():
-        #     buf_inputs = self.buffer.examples
-        #     buf_logits = self.buffer.logits
-        #     buf_outputs = self.net(buf_inputs)
-        #     new_logits = 0.7 * buf_logits + 0.3 * buf_outputs.data
-        #     self.buffer.logits = new_logits

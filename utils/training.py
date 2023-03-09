@@ -186,11 +186,6 @@ def train(model: ContinualModel, dataset: ContinualDataset,
             tb_logger.log_accuracy(np.array(accs), mean_acc, args, t)
             csv_logger.log(mean_acc)
 
-        if model.NAME == 'cr_new':
-            model.learned_classes += dataset.N_CLASSES_PER_TASK
-            if t > 0:
-                model.update_logits()
-
     if args.tensorboard:
         tb_logger.close()
         csv_logger.add_bwt(results, results_mask_classes)
