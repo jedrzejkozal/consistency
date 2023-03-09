@@ -3,6 +3,9 @@
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
 
+import random
+import torch
+import numpy as np
 from utils.conf import set_random_seed
 from utils.best_args import best_args
 from utils.training import train
@@ -10,7 +13,7 @@ from models import get_model
 from datasets import get_dataset
 from utils.continual_training import train as ctrain
 from datasets import ContinualDataset
-from utils.args import add_management_args, add_arguments
+from utils.args import add_management_args, add_arguments, add_experiment_args
 from argparse import ArgumentParser
 from models import get_all_models
 from datasets import NAMES as DATASET_NAMES
@@ -35,6 +38,7 @@ def lecun_fix():
 def main():
     lecun_fix()
     args = get_args()
+    seed_everything(args.seed)
 
     dataset = get_dataset(args)
     backbone = dataset.get_backbone()
@@ -96,6 +100,16 @@ def get_args():
     if args.model == 'mer':
         setattr(args, 'batch_size', 1)
     return args
+
+
+def seed_everything(seed: int):
+    random.seed(seed)
+    os.environ['PYTHONHASHSEED'] = str(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False  # change to true for faster convergence
 
 
 if __name__ == '__main__':

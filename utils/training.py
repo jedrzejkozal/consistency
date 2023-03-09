@@ -40,7 +40,7 @@ def mask_classes(outputs: torch.Tensor, dataset: ContinualDataset, k: int) -> No
     """
     outputs[:, 0:k * dataset.N_CLASSES_PER_TASK] = -float('inf')
     outputs[:, (k + 1) * dataset.N_CLASSES_PER_TASK:
-               dataset.N_TASKS * dataset.N_CLASSES_PER_TASK] = -float('inf')
+            dataset.N_TASKS * dataset.N_CLASSES_PER_TASK] = -float('inf')
 
 
 def evaluate(model: ContinualModel, dataset: ContinualDataset, last=False) -> Tuple[list, list]:
@@ -161,6 +161,15 @@ def train(model: ContinualModel, dataset: ContinualDataset,
         model_stash['task_idx'] = t + 1
         model_stash['epoch_idx'] = 0
 
+        # import matplotlib.pyplot as plt
+        # import numpy as np
+
+        # print(np.unique(labels.cpu().numpy()))
+        # for i in range(5):
+        #     plt.plot(model.buffer.logits.cpu().numpy()[i])
+        # plt.show()
+        # exit()
+
         if hasattr(model, 'end_task'):
             model.end_task(dataset)
 
@@ -169,13 +178,18 @@ def train(model: ContinualModel, dataset: ContinualDataset,
         results_mask_classes.append(accs[1])
 
         mean_acc = np.mean(accs, axis=1)
-        print_mean_accuracy(mean_acc, t + 1, dataset.SETTING)
+        print_mean_accuracy(mean_acc, t, dataset.SETTING)
 
         model_stash['mean_accs'].append(mean_acc)
 
         if args.tensorboard:
             tb_logger.log_accuracy(np.array(accs), mean_acc, args, t)
             csv_logger.log(mean_acc)
+
+        if model.NAME == 'cr_new':
+            model.learned_classes += dataset.N_CLASSES_PER_TASK
+            if t > 0:
+                model.update_logits()
 
     if args.tensorboard:
         tb_logger.close()
@@ -193,4 +207,3 @@ def train(model: ContinualModel, dataset: ContinualDataset,
             torch.save(model.net.module.state_dict(), fname)
         else:
             torch.save(model.net.state_dict(), fname)
-

@@ -7,19 +7,10 @@ from argparse import ArgumentParser
 from datasets import NAMES as DATASET_NAMES
 from models import get_all_models
 
+
 def add_arguments(parser):
     parser.add_argument('--pretext_task', type=str, default='mse',
                         help='SSL training algorithm as a pretext task fo DER++')
-    parser.add_argument('--barlow_on_weight', type=float, default=0.5,
-                        help='weight for barlow twin on_diag')
-    parser.add_argument('--barlow_off_weight', type=float, default=0.05,
-                        help='weight for barlow twin off_diag')
-    parser.add_argument('--dino_weight', type=float, default=1,
-                        help='weight for Dino Loss')
-    parser.add_argument('--byol_weight', type=float, default=1,
-                        help='weight for BYOL Loss')
-    parser.add_argument('--simclr_weight', type=float, default=0.05,
-                        help='weight for Dino Loss')
     parser.add_argument('--align_weight', type=float, default=0.5,
                         help='multitask weight for alignment loss')
     parser.add_argument('--uni_weight', type=float, default=0.1,
@@ -32,6 +23,7 @@ def add_arguments(parser):
                         help='multicrop augmentation for buffered images')
     parser.add_argument('--size_crops', nargs='+', default=[64, 32],
                         help='size crops for multicrop')
+
 
 def add_experiment_args(parser: ArgumentParser) -> None:
     """
